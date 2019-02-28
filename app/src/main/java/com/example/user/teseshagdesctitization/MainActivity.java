@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
-import android.hardware.SensorEventListener2;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
@@ -15,8 +14,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -60,7 +57,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float pxaf, pyaf, pzaf;
     float Sx, Sy, Sz;
     float f;
-
+    // Create a constant to convert nanoseconds to seconds.
+    private static final float NS2S = 1.0f / 1000000000.0f;
+    private float timestamp;
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                     //writer.write("TIME;ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;\n");
                     //    writer.write("TIME;ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;  VX);
-                    writer.write("TIME;ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;  VX; VY; VZ; VxFiltr;  VyFiltr; VzFiltr; Sx; Sy; Sz; f\n");
+                    writer.write("TIME;ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;  VX; VY; VZ; VxFiltr;  VyFiltr; VzFiltr; Sx; Sy; Sz; shag; f\n");
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -138,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
            //     manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), v*1000);//было
           //      manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), v*1000);///было
                 manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), (int) frequency*1000);//выносить
-               manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), (int) frequency*1000);///
+                manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), (int) frequency*1000);///
 
                 isRunning = true;
                 return true;
@@ -227,23 +226,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         @Override
         public void onSensorChanged(SensorEvent hardEvent) {
-            MySensorEvent event = new MySensorEvent(hardEvent);
-            switch (event.sensor.getType()) {
-                case Sensor.TYPE_ACCELEROMETER:
-                    for (int i = 0; i < 3; i++) {
-                        valuesAccel[i] = event.values[i];
-                    }
-                    break;
-                case Sensor.TYPE_GYROSCOPE:
-                    for (int i = 0; i < 3; i++) {
-                        valuesGiroscope[i] = event.values[i];
-                    }
-                    break;
+            //	timestamp
+            //The time in nanosecond at which the event happened отметка времени
+            //Время в наносекунде, в которое произошло событие
+            if (timestamp != 0) {
+                final float dT = (hardEvent.timestamp - timestamp) * NS2S;
 
+                MySensorEvent event = new MySensorEvent(hardEvent);
+
+                switch (event.sensor.getType()) {
+                    case Sensor.TYPE_ACCELEROMETER:
+                        for (int i = 0; i < 3; i++) {
+                            valuesAccel[i] = event.values[i];
+                        }
+                        break;
+                    case Sensor.TYPE_GYROSCOPE:
+                        for (int i = 0; i < 3; i++) {
+                            valuesGiroscope[i] = event.values[i];
+                        }
+                        break;
+
+                }
+                timestamp = event.timestamp;
             }
-
         }
-
         @Override
         public void onAccuracyChanged(Sensor sensor, int i) {
 
@@ -254,12 +260,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public void onSensorChanged(SensorEvent event) {
         MySensorEvent evt=new MySensorEvent(event);
+
         if (isRunning) {
             if(t==0){
                 t=System.currentTimeMillis();
             }
             long s=System.currentTimeMillis()-t;
             long date=System.currentTimeMillis();//Возвращает текущее время в миллисекундах.
+            final long dT = (long) ((event.timestamp - timestamp) * NS2S);
             try {
                 switch (evt.sensor.getType()) {
                     case Sensor.TYPE_GYROSCOPE:
@@ -357,6 +365,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         private MySensorEvent gyrEvent;
         private MySensorEvent accEvent;
 
+
         private float xaf, yaf, zaf;
         private float xgf, ygf, zgf;
         private float alpha = 0.05f;
@@ -393,7 +402,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accEvent = null;
         }
 
-        public String getStringData(long date) {
+
+
+        public String getStringData(long date) { //update
+         //  final float dT = (date - timestamp) * NS2S;
+            final float dT = (date - timestamp) * (NS2S);
             xaf = xaf + alpha * (accEvent.values[0] - xaf);
             yaf = yaf + alpha * (accEvent.values[1] - yaf);
             zaf = zaf + alpha * (accEvent.values[2] - zaf);
@@ -404,44 +417,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             ygf = ((1-k)*gyrEvent.values[1])+(k*accEvent.values[1]);
             zgf = ((1-k)*gyrEvent.values[2])+(k*accEvent.values[2]);
             if(prefaccEvent!=null){
-//                vx= (float) ((accEvent.values[0]+prefaccEvent.values[0])/2.0*v)/1000;
-//                vy= (float) ((accEvent.values[1]+prefaccEvent.values[1])/2.0* v)/1000;
-//                vz= (float) ((accEvent.values[2]+prefaccEvent.values[2])/2.0* v)/1000;
-//                vxfit= (float) ((xaf+pxaf)/2.0* v)/1000;
-//                vyfit= (float) ((yaf+pyaf)/2.0* v)/1000;
-//                vzfit= (float) ((zaf+pzaf)/2.0* v)/1000;
-//                Sx=(float)(v*vxfit)/1000;
-//                Sy=(float)(v*vyfit)/1000;
-//                Sz=(float)(v*vzfit)/1000;
-
-
-                ///frequency -частота в микросекундах
-                //-shag шаг
-            //    float sec= (float) (frequency*0.000001); 1 вариант
-              //  float sec= (float) (frequency/0.00001);
-
-                float sec= (float) (frequency*100);/////???????
-                float shag=1/sec;
-
-//                vx= (float) ((accEvent.values[0]+prefaccEvent.values[0])/2.0 * shag)/1000;
-//                vy= (float) ((accEvent.values[1]+prefaccEvent.values[1])/2.0* shag)/1000;
-//                vz= (float) ((accEvent.values[2]+prefaccEvent.values[2])/2.0* shag)/1000;
-//                vxfit= (float) ((xaf+pxaf)/2.0* shag)/1000;
-//                vyfit= (float) ((yaf+pyaf)/2.0*shag)/1000;
-//                vzfit= (float) ((zaf+pzaf)/2.0* shag)/1000;
-//                Sx=(float)(shag*vxfit)/1000;
-//                Sy=(float)(shag*vyfit)/1000;
-//                Sz=(float)(shag*vzfit)/1000;
 //
-                vx= (float) ((accEvent.values[0]+prefaccEvent.values[0])/2.0 * shag);
-                vy= (float) ((accEvent.values[1]+prefaccEvent.values[1])/2.0* shag);
-                vz= (float) ((accEvent.values[2]+prefaccEvent.values[2])/2.0* shag);
-                vxfit= (float) ((xaf+pxaf)/2.0*shag);
-                vyfit= (float) ((yaf+pyaf)/2.0*shag);
-                vzfit= (float) ((zaf+pzaf)/2.0*shag);
-                Sx=(float)(shag*vxfit);
-                Sy=(float)(shag*vyfit);
-                Sz=(float)(shag*vzfit);
+
+
+                vx= (float) ((accEvent.values[0]+prefaccEvent.values[0])/2.0*dT);
+                vy= (float) ((accEvent.values[1]+prefaccEvent.values[1])/2.0*dT);
+                vz= (float) ((accEvent.values[2]+prefaccEvent.values[2])/2.0*dT);
+                vxfit= (float) ((xaf+pxaf)/2.0*dT);
+                vyfit= (float) ((yaf+pyaf)/2.0*dT);
+                vzfit= (float) ((zaf+pzaf)/2.0*dT);
+                Sx=(float)(dT*vxfit);
+                Sy=(float)(dT*vyfit);
+                Sz=(float)(dT*vzfit);
+                shag=dT;
 //
 
 
@@ -451,14 +439,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             pxaf=xaf;
             pyaf=yaf;
             pzaf=zaf;
-            return String.format("%d; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f;%f; %f; %f;\n",
+            return String.format("%d; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f; %f;%f; %f; %f; %f;\n",
 
                     date,
                     accEvent.values[0],
 
                     accEvent.values[1], accEvent.values[2], xaf,yaf,zaf,
                     gyrEvent.values[0], gyrEvent.values[1], gyrEvent.values[2], xgf, ygf, zgf,
-                    vx,vy,vz, vxfit, vyfit, vzfit, Sx, Sy, Sz);
+                    vx,vy,vz, vxfit, vyfit, vzfit, Sx, Sy, Sz, shag);
 
         }
     }
