@@ -83,7 +83,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="60dp"
         android:ems="10"
-        android:hint="Введите шаг дискретизации"
+        android:hint="Укажите частоту опроса"
         android:inputType="number|numberDecimal" />
 
     <TextView
