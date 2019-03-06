@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                     //writer.write("TIME;ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;\n");
                     //    writer.write("TIME;ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;  VX);
-                    writer.write("TIME; f; ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;  VX; VY; VZ; VxFiltr;  VyFiltr; VzFiltr; Sx; Sy; Sz; shag; f\n");
+                    writer.write("TIME; dT; ACC X;ACC Y;ACC Z;ACC XF;ACC YF;ACC ZF;GYR X; GYR Y; GYR Z; GYR XF; GYR YF; GYR ZF;  VX; VY; VZ; VxFiltr;  VyFiltr; VzFiltr; Sx; Sy; Sz; shag; f\n");
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -221,11 +221,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void onSensorChanged(SensorEvent hardEvent) {
             long currentTime=System.currentTimeMillis();
-            //	timestamp
-            //The time in nanosecond at which the event happened отметка времени
-            //Время в наносекунде, в которое произошло событие
-            if (timestamp != 0) {
-               // final float dT = (hardEvent.timestamp - timestamp) * NS2S;
+
                 if (timestamp != 0) {
                     final float dT = (hardEvent.timestamp - timestamp) * NS2S;
                     for (int index = 0; index < 3; ++index) ;
@@ -256,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 }
                 timestamp = event.timestamp;
-            }
+           // }
         }
         @Override
         public void onAccuracyChanged(Sensor sensor, int i) {
@@ -430,40 +426,41 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             ygf = ((1-k)*gyrEvent.values[1])+(k*accEvent.values[1]);
             zgf = ((1-k)*gyrEvent.values[2])+(k*accEvent.values[2]);
             float dT = 0;
+            float dTS =0;
             if(this.prefaccEvent!=null){
-                dT=this.accEvent.time-this.prefaccEvent.time;};//миллисекунды
+                dT=this.accEvent.time-this.prefaccEvent.time;
+         //   };//миллисекунды
 
-            final  float dTS= (float) (dT/1000.0); //сек Шаг
-//
-               // if (timestamp != 0) {
-                    // final float dT = (hardEvent.timestamp - timestamp) * NS2S;
-                    if (timestamp != 0) {
-                      //  final float dT = (date - timestamp);
+               dTS= (float) (dT/1000.0); //сек Шаг
+                   /// if (timestamp != 0) {
+
 
                         for (int index = 0; index < 3; ++index) ;
                         {
-                            vx += (accEvent.values[0]+prefaccEvent.values[0])/2.0 * dTS;
-                            Sx += vx * dTS * 10000;
+                           // vx += (accEvent.values[0]+prefaccEvent.values[0])/2.0 * dTS;
+                            if(dTS!=0) {
+                                vx = (float) ((accEvent.values[0] + prefaccEvent.values[0]) / 2.0* dTS);
+                               // vx = (float) ((accEvent.values[0]));
 
-                            vy += (accEvent.values[1]+prefaccEvent.values[1])/2.0 * dTS;
-                            Sy += vy * dTS * 10000;
+                                Sx = vx * dTS;
 
-                            vz += (accEvent.values[2]+prefaccEvent.values[2])/2.0 * dTS;
-                            Sz += vz * dT * 10000;
+                                vy += (accEvent.values[1] + prefaccEvent.values[1]) / 2.0 * dTS;
+                                Sy += vy * dTS;
 
-                            vxfit += ((xaf+pxaf)/2.0) * dT;
-                            Sxfit += vxfit * dT * 10000;
+                                vz += (accEvent.values[2] + prefaccEvent.values[2]) / 2.0 * dTS;
+                                Sz += vz * dTS;
 
-                            vyfit += ((yaf+pyaf)/2.0) * dT;
-                            Syfit += vyfit * dT * 10000;
+                                vxfit += ((xaf + pxaf) / 2.0) * dTS;
+                                Sxfit += vxfit * dTS;
 
-                            vzfit += ((zaf+pzaf)/2.0) * dT;
-                            Szfit += vzfit * dT * 10000;
+                                vyfit += ((yaf + pyaf) / 2.0) * dTS;
+                                Syfit += vyfit * dTS;
 
+                                vzfit += ((zaf + pzaf) / 2.0) * dTS;
+                                Szfit += vzfit * dTS;
 
+                            }
 
-                            float vxpref;
-                            //vx += vxpref + (accEvent.values[0]* dT);
                         }
                     }
             pxaf=xaf;
