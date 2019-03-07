@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final float NS2S = 1.0f / 1000000000.0f;
     private float timestamp;
     private final float[] deltaRotationVector = new float[4];//+++07.03
+    TextView tv_or_0, tv_or_1, tv_or_2, tv_or_3;//++++07.03
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,10 +101,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         //   tvText = (TextView) findViewById(R.id.tvText);
         manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 
+        tv_or_0 = (TextView) findViewById(R.id.OrintX);//+++
+        tv_or_1 = (TextView) findViewById(R.id.OrintY);//+++
+        tv_or_2 = (TextView) findViewById(R.id.OrintZ);////++++++
+        tv_or_3 = (TextView) findViewById(R.id.Orint4);//+++
+
+
         buttonStart = (Button) findViewById(R.id.buttonStart);
         buttonStop = (Button) findViewById(R.id.buttonStop);
         editAlpha = (EditText) findViewById(R.id.editAlpha);
         editK = (EditText) findViewById(R.id.editK);
+
 
         buttonStart.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -414,8 +422,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         {
                             if(dTS!=0) {
                                 vx = (float) (((accEvent.values[0] + prefaccEvent.values[0]) / 2.0)* dTS);// умножать на шаг
-
-                                //Sx = vx * dTS;
                                 Sx = vx * dTS;
 
                                 vy = (float) (((accEvent.values[1] + prefaccEvent.values[1]) / 2.0) * dTS);
@@ -474,8 +480,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             // in order to get the updated rotation.
             // rotationCurrent = rotationCurrent * deltaRotationMatrix;
 
+            tv_or_0.setText("OR X:" + deltaRotationVector[0]); //++
+            tv_or_1.setText("OR Y:" + deltaRotationVector[1]); //++
+            tv_or_2.setText("OR Z:" + deltaRotationVector[2]); //++
+            tv_or_3.setText("OR  :" + deltaRotationVector[3]); //++
 
-            // }//+++
 
 
             pxaf=xaf;

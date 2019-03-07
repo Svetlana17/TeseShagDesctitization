@@ -98,5 +98,45 @@
 
         android:textSize="20sp"
         tools:textColor="colors/red" />
+    <TextView
+        android:id="@+id/Ort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ориентация"
+        android:textColor="@color/color1D"
+        android:textSize="20sp"
+        android:textStyle="bold|italic" />
+    <TextView
+        android:id="@+id/OrintX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textColor="@color/color1t"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/OrintY"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:textSize="20sp"
+        android:textColor="@color/color1t"
+        android:text="" />
+    <TextView
+        android:id="@+id/OrintZ"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:textSize="20sp"
+        android:textColor="@color/color1t"
+        android:text="" />
+    <TextView
+        android:id="@+id/Orint4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:textSize="20sp"
+        android:textColor="@color/color1t"
+        android:text="" />
 
 </RelativeLayout>
