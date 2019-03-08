@@ -63,16 +63,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     float pxaf, pyaf, pzaf;
     float Sx, Sy, Sz;
     float f;
+    float g = (float) 9.8066;
     // Create a constant to convert nanoseconds to seconds.
     private static final float NS2S = 1.0f / 1000000000.0f;
     private float timestamp;
     private final float[] deltaRotationVector = new float[4];//+++07.03
     TextView tv_or_0, tv_or_1, tv_or_2, tv_or_3;//++++07.03
+    TextView textX, textY, textZ;//++07.03
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_mainp);
+      //  setContentView(R.layout.activity_mainp);
+        setContentView(R.layout.activity_scroll);
         editTextShag=(EditText)findViewById(R.id.editShag);
         editTextShag.addTextChangedListener(new TextWatcher() {
             @Override
@@ -84,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void afterTextChanged(Editable editable) {
                 v=Integer.parseInt(editable.toString());
-                //frequency=Integer.parseInt(editable.toString());
             }
         });
         shareButton = (Button) findViewById(R.id.buttonShare);
@@ -98,13 +100,51 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                        }
         );
         isRunning = false;
-        //   tvText = (TextView) findViewById(R.id.tvText);
+
         manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        ///**
+
+        TextView textX = (TextView) findViewById(R.id.GirtextX);
+        TextView textY = (TextView) findViewById(R.id.GirtextY);
+        TextView textZ = (TextView) findViewById(R.id.GirtextZ);
+
+        TextView tv_accX = (TextView) findViewById(R.id.AcctextX);
+        TextView tv_accY = (TextView)findViewById(R.id.AcctextY);
+        TextView tv_accZ = (TextView) findViewById(R.id.AcctextZ);
 
         tv_or_0 = (TextView) findViewById(R.id.OrintX);//+++
         tv_or_1 = (TextView) findViewById(R.id.OrintY);//+++
         tv_or_2 = (TextView) findViewById(R.id.OrintZ);////++++++
         tv_or_3 = (TextView) findViewById(R.id.Orint4);//+++
+
+
+        TextView alpha_text = (TextView) findViewById(R.id.alpha);
+        TextView betta_text = (TextView) findViewById(R.id.betta);
+        TextView gamma_text = (TextView) findViewById(R.id.gamma);
+
+        TextView fiX=(TextView)findViewById(R.id.alphaGirX);
+        TextView fiY=(TextView)findViewById(R.id.bettaGirY);
+        TextView fiZ=(TextView)findViewById(R.id.gammaGirZ);
+///
+
+
+      //  x_high_pass_x=(TextView)findViewById(R.id.FiltX);
+     //   y_high_pass_y=(TextView)findViewById(R.id.FiltY);
+       // z_high_pass_z=(TextView)findViewById(R.id.FiltZ);
+
+      //  Sxf=(TextView)findViewById(R.id.Sxg);
+     //   Sy=(TextView)findViewById(R.id.Sy);
+     //   Sz=(TextView)findViewById(R.id.Sz);
+
+        //Для углов акселерометра
+     //   tan=(TextView) findViewById(R.id.tan);
+     //   cren=(TextView)findViewById(R.id.cren);
+
+
+        tv_or_0 = (TextView) findViewById(R.id.OrintXX);//+++
+        tv_or_1 = (TextView) findViewById(R.id.OrintYY);//+++
+        tv_or_2 = (TextView) findViewById(R.id.OrintZZ);////++++++
+        tv_or_3 = (TextView) findViewById(R.id.Orint44);//+++
 
 
         buttonStart = (Button) findViewById(R.id.buttonStart);
@@ -238,16 +278,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             long currentTime=System.currentTimeMillis();
 
                 if (timestamp != 0) {
-                   // final float dT = (hardEvent.timestamp - timestamp) * NS2S;
-                  //  for (int index = 0; index < 3; ++index) ;
-                  //  {
-                     //   vx += hardEvent.values[0] * dT;
-                     //   Sx += vx * dT * 10000;
-                     //   vy += hardEvent.values[1]*dT;
-                     //   Sy += vy * dT * 10000;
-                      //  vz += hardEvent.values[2]*dT;
-                      //  Sz += vz * dT * 10000;
-                   // }
                 }
 
 
@@ -256,11 +286,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     case Sensor.TYPE_ACCELEROMETER:
                         for (int i = 0; i < 3; i++) {
                             valuesAccel[i] = event.values[i];
+                            textX.setText("X  : " + event.values[0] + " м/с2");
+                            textY.setText("Y : " + event.values[1] + " м/с2");
+                            textZ.setText("Z : " + event.values[2] + " м/с2");
                         }
                         break;
                     case Sensor.TYPE_GYROSCOPE:
                         for (int i = 0; i < 3; i++) {
                             valuesGiroscope[i] = event.values[i];
+
                         }
                         break;
                 }
@@ -383,6 +417,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         private float vxfit, vyfit, vzfit;
         private float Sxfit, Syfit, Szfit;
         float vx,vy,vz;
+
+        float kt= (float) 11.3163649;// поправочный коэффицент для оси Х
         public void setParams(float alpha, float k) {
             this.alpha = alpha;
             this.k = k;
@@ -408,10 +444,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         public String getStringData(long date) {
            xaf = xaf + alpha * (accEvent.values[0] - xaf);
            yaf = yaf + alpha * (accEvent.values[1] - yaf);
-           zaf = zaf + alpha * (accEvent.values[2] - zaf);
+           zaf = zaf + alpha * (accEvent.values[2]-g-zaf);
             xgf = ((1-k)*gyrEvent.values[0])+(k*accEvent.values[0]);
             ygf = ((1-k)*gyrEvent.values[1])+(k*accEvent.values[1]);
-            zgf = ((1-k)*gyrEvent.values[2])+(k*accEvent.values[2]);
+            zgf = ((1-k)*gyrEvent.values[2])+(k*accEvent.values[2]-g);
             float dT = 0;
             float dTS =0;
             if(this.prefaccEvent!=null){
@@ -421,17 +457,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         for (int index = 0; index < 3; ++index) ;
                         {
                             if(dTS!=0) {
-                                vx = (float) (((accEvent.values[0] + prefaccEvent.values[0]) / 2.0)* dTS);// умножать на шаг
-                                Sx = vx * dTS;
+                                vx = (float) ((((accEvent.values[0] + prefaccEvent.values[0])) / 2.0)* dTS);// умножать на шаг
+                                Sx = vx * dTS*kt;
 
                                 vy = (float) (((accEvent.values[1] + prefaccEvent.values[1]) / 2.0) * dTS);
                                 Sy = vy * dTS;
 
-                                vz = ((float) ((accEvent.values[2] + prefaccEvent.values[2]) / 2.0) * dTS);
+                                vz = ((float) ((accEvent.values[2]-g + prefaccEvent.values[2]) / 2.0) * dTS);
                                 Sz = vz * dTS;
 
-                                vxfit = (float) (((xaf + pxaf) / 2.0) * dTS);
-                                Sxfit = vxfit * dTS;
+                                vxfit = (float) ((((xaf + pxaf)) / 2.0) * dTS);
+                                Sxfit = vxfit * dTS*kt;
 
                                 vyfit = (float) (((yaf + pyaf) / 2.0) * dTS);
                                 Syfit = vyfit * dTS;

@@ -16,7 +16,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="64dp"
         android:enabled="true"
-
         android:text="Начать запись" />
 
     <Button
@@ -38,14 +37,12 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="150dp"
         android:enabled="true"
-
         android:text="Отправить" />
 
     <EditText
         android:id="@+id/editK"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -61,7 +58,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/editK"
-
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
@@ -76,7 +72,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/editK"
-
         android:layout_marginStart="20dp"
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
@@ -90,12 +85,9 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_alignParentTop="true"
-
         android:layout_marginTop="20dp"
         android:text="Параметры системы"
-
         android:textSize="20sp"
         tools:textColor="colors/red" />
     <TextView
