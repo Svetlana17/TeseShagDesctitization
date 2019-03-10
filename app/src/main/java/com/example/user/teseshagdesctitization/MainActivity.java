@@ -74,8 +74,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-      //  setContentView(R.layout.activity_mainp);
-        setContentView(R.layout.activity_scroll);
+    setContentView(R.layout.activity_mainp);
+       // setContentView(R.layout.activity_scroll);
         editTextShag=(EditText)findViewById(R.id.editShag);
         editTextShag.addTextChangedListener(new TextWatcher() {
             @Override
@@ -104,13 +104,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         ///**
 
-        TextView textX = (TextView) findViewById(R.id.GirtextX);
-        TextView textY = (TextView) findViewById(R.id.GirtextY);
-        TextView textZ = (TextView) findViewById(R.id.GirtextZ);
+       // TextView textX = (TextView) findViewById(R.id.GirtextX);
+       // TextView textY = (TextView) findViewById(R.id.GirtextY);
+      ///  TextView textZ = (TextView) findViewById(R.id.GirtextZ);
 
-        TextView tv_accX = (TextView) findViewById(R.id.AcctextX);
-        TextView tv_accY = (TextView)findViewById(R.id.AcctextY);
-        TextView tv_accZ = (TextView) findViewById(R.id.AcctextZ);
+    //    TextView tv_accX = (TextView) findViewById(R.id.AcctextX);
+    //    TextView tv_accY = (TextView)findViewById(R.id.AcctextY);
+    //    TextView tv_accZ = (TextView) findViewById(R.id.AcctextZ);
 
         tv_or_0 = (TextView) findViewById(R.id.OrintX);//+++
         tv_or_1 = (TextView) findViewById(R.id.OrintY);//+++
@@ -118,13 +118,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tv_or_3 = (TextView) findViewById(R.id.Orint4);//+++
 
 
-        TextView alpha_text = (TextView) findViewById(R.id.alpha);
-        TextView betta_text = (TextView) findViewById(R.id.betta);
-        TextView gamma_text = (TextView) findViewById(R.id.gamma);
+      //  TextView alpha_text = (TextView) findViewById(R.id.alpha);
+     //   TextView betta_text = (TextView) findViewById(R.id.betta);
+      //  TextView gamma_text = (TextView) findViewById(R.id.gamma);
 
-        TextView fiX=(TextView)findViewById(R.id.alphaGirX);
-        TextView fiY=(TextView)findViewById(R.id.bettaGirY);
-        TextView fiZ=(TextView)findViewById(R.id.gammaGirZ);
+      //  TextView fiX=(TextView)findViewById(R.id.alphaGirX);
+      //  TextView fiY=(TextView)findViewById(R.id.bettaGirY);
+      //  TextView fiZ=(TextView)findViewById(R.id.gammaGirZ);
 ///
 
 
@@ -141,10 +141,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      //   cren=(TextView)findViewById(R.id.cren);
 
 
-        tv_or_0 = (TextView) findViewById(R.id.OrintXX);//+++
-        tv_or_1 = (TextView) findViewById(R.id.OrintYY);//+++
-        tv_or_2 = (TextView) findViewById(R.id.OrintZZ);////++++++
-        tv_or_3 = (TextView) findViewById(R.id.Orint44);//+++
+     //   tv_or_0 = (TextView) findViewById(R.id.OrintXX);//+++
+     //   tv_or_1 = (TextView) findViewById(R.id.OrintYY);//+++
+    //    tv_or_2 = (TextView) findViewById(R.id.OrintZZ);////++++++
+      //  tv_or_3 = (TextView) findViewById(R.id.Orint44);//+++
 
 
         buttonStart = (Button) findViewById(R.id.buttonStart);
@@ -186,8 +186,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     e.printStackTrace();
                 }
 
-           //     manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), v*1000);//было
-          //      manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), v*1000);///было
+
                 manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), (int) v*1000);//выносить
                 manager.registerListener(MainActivity.this, manager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), (int) v*1000);///
                 isRunning = true;
@@ -241,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 .append("\n\nAccel motion: " + format(valuesAccel))
                 .append("\nAccel gravity : " + format(valuesGiroscope));
 
-//        tvText.setText(sb);
     }
 
     @Override
@@ -418,7 +416,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         private float Sxfit, Syfit, Szfit;
         float vx,vy,vz;
 
-        float kt= (float) 11.3163649;// поправочный коэффицент для оси Х
+        float kt= (float) 11.3163649;// поправочный коэффицент для оси Х для 1 метра
+        float kt2= (float) 17.8752994;
         public void setParams(float alpha, float k) {
             this.alpha = alpha;
             this.k = k;
@@ -458,7 +457,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         {
                             if(dTS!=0) {
                                 vx = (float) ((((accEvent.values[0] + prefaccEvent.values[0])) / 2.0)* dTS);// умножать на шаг
-                                Sx = vx * dTS*kt;
+                               Sx = vx * dTS*kt2;
+                              //  Sx = vx * dTS;
 
                                 vy = (float) (((accEvent.values[1] + prefaccEvent.values[1]) / 2.0) * dTS);
                                 Sy = vy * dTS;
@@ -467,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                                 Sz = vz * dTS;
 
                                 vxfit = (float) ((((xaf + pxaf)) / 2.0) * dTS);
-                                Sxfit = vxfit * dTS*kt;
+                                Sxfit = vxfit * dTS*kt2;
 
                                 vyfit = (float) (((yaf + pyaf) / 2.0) * dTS);
                                 Syfit = vyfit * dTS;
