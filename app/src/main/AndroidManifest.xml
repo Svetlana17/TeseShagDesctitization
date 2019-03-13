@@ -16,7 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".IntegrationValuesGiroscope"></activity>
+        <activity android:name=".IntegrationValuesGiroscope" />
+        <activity android:name=".VervleActivity"></activity>
     </application>
 
 </manifest>

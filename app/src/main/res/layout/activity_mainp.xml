@@ -12,9 +12,10 @@
         android:id="@+id/buttonStart"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="64dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="184dp"
         android:enabled="true"
         android:text="Начать запись" />
 
@@ -24,18 +25,20 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/buttonStart"
 
-        android:layout_marginTop="128dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="68dp"
         android:enabled="false"
-        android:text="Стоп"
-        />
+        android:text="Стоп" />
 
     <Button
         android:id="@+id/buttonShare"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="150dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="246dp"
         android:enabled="true"
         android:text="Отправить" />
 
@@ -62,7 +65,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="1dp"
         android:ems="10"
         android:hint="Введите alpha"
         android:inputType="number|numberDecimal" />
@@ -76,7 +79,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="51dp"
         android:ems="10"
         android:hint="Укажите частоту опроса"
         android:inputType="number|numberDecimal" />
@@ -85,15 +88,22 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="6dp"
         android:text="Параметры системы"
         android:textSize="20sp"
         tools:textColor="colors/red" />
+
     <TextView
         android:id="@+id/Ort"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="38dp"
         android:text="Ориентация"
         android:textColor="@color/color1D"
         android:textSize="20sp"
@@ -110,10 +120,14 @@
         android:id="@+id/OrintY"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_marginTop="20sp"
-        android:textSize="20sp"
+        android:layout_marginEnd="382dp"
+        android:layout_marginRight="382dp"
+        android:text=""
         android:textColor="@color/color1t"
-        android:text="" />
+        android:textSize="20sp" />
     <TextView
         android:id="@+id/OrintZ"
         android:layout_width="wrap_content"
@@ -127,7 +141,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20sp"
-        android:textSize="20sp"
+        android:textSize="10sp"
+        android:textColor="@color/color1t"
+        android:text="" />
+    <TextView
+        android:id="@+id/GirtextX"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20sp"
+        android:textSize="10sp"
         android:textColor="@color/color1t"
         android:text="" />
 
